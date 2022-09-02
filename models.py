@@ -7,9 +7,6 @@ db = SQLAlchemy()
 
 DEFAULT_IMG_URL = "https://blog.nscsports.org/default-img/"
 
-def connect_db(app):
-    db.app = app
-    db.init_app(app)
 
 class User(db.Model):
     """Registered Users"""
@@ -55,3 +52,25 @@ class Post(db.Model):
                            default=datetime.datetime.now)
 
     user_code = db.Column(db.Text, db.ForeignKey('users.id'))
+
+class Tag(db.Model):
+    """User Tags"""
+
+    __tablename__ = 'tags'
+
+    id = db.Column(db.Integer,
+                   primary_key=True)
+    name = db.Column(db.Text,
+                     nullable=False,
+                     unique=True)
+    
+    posts = db.relationship(
+        'Post',
+        secondary="posts_tags",
+        backref="tags",
+    )
+
+
+def connect_db(app):
+    db.app = app
+    db.init_app(app)
